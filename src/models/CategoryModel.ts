@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 //model and schema
-// 0-prototype
+// 0-interface
 export interface Category {
   name?: string;
   slug: string;
