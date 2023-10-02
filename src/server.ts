@@ -1,6 +1,9 @@
+import path from "path";
+
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+
 //Routes
 import categoryRouter from "./routes/categoryRoute";
 import subCategoryRouter from "./routes/subcategoryRoute";
@@ -17,6 +20,7 @@ const app = express();
 dotenv.config();
 
 app.use(express.json()); //parsing middleware
+app.use(express.static(path.join(__dirname, "../uploads"))); //static files middleware (images
 
 // decide whether to use logger or not depending on node environment
 if (process.env.NODE_ENV === "development") {

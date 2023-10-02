@@ -25,7 +25,19 @@ const brandSchema = new mongoose.Schema<Brand>(
   },
   { timestamps: true }
 );
-
+//mongoose query middleware
+const setImageUrl = function (doc: Brand) {
+  if (doc.image) {
+    const imageURL = `${process.env.API_URL}/brands/${doc.image}`;
+    doc.image = imageURL; // replace image name with full url
+  }
+};
+brandSchema.post<Brand>("init", (doc) => {
+  setImageUrl(doc);
+});
+brandSchema.post<Brand>("save", (doc) => {
+  setImageUrl(doc);
+});
 // 2- create Model
 // while naming model its convention to start with capital letters
 export const BrandModel = mongoose.model("Brand", brandSchema);

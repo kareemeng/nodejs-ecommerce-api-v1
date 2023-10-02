@@ -5,6 +5,8 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
+  resizeProductImage,
 } from "../services/productServices";
 import {
   getProductValidator,
@@ -16,7 +18,15 @@ import {
 // import { removeDuplicateSubCategories } from  "../middleware/subCategoryMiddleware";
 const router = express.Router();
 
-router.route("/").get(getProducts).post(createProductValidator, createProduct);
+router
+  .route("/")
+  .get(getProducts)
+  .post(
+    uploadProductImage,
+    resizeProductImage,
+    createProductValidator,
+    createProduct
+  );
 
 router
   .route("/:id")

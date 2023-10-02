@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+// import dotenv from "dotenv";
+// dotenv.config();
 // interface for the model
 export interface Category {
   name: string;
@@ -25,6 +26,19 @@ const categorySchema = new mongoose.Schema<Category>(
   },
   { timestamps: true }
 );
+const setImageUrl = function (doc: Category) {
+  if (doc.image) {
+    const imageURL = `${process.env.API_URL}/categories/${doc.image}`;
+    doc.image = imageURL; // replace image name with full url
+  }
+};
+// mongoose query middleware
+categorySchema.post<Category>("init", (doc) => {
+  setImageUrl(doc);
+});
+categorySchema.post<Category>("save", (doc) => {
+  setImageUrl(doc);
+});
 
 // 2- create Model
 // while naming model its convention to start with capital letters

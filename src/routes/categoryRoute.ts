@@ -6,6 +6,8 @@ import {
   getCategory,
   updateCategory,
   deleteCategory,
+  resizeCategoryImage,
+  uploadCategoryImage,
 } from "../services/categoryServices";
 import {
   getCategoryValidator,
@@ -13,6 +15,8 @@ import {
   updateCategoryValidator,
   deleteCategoryValidator,
 } from "../utils/validators/categoryValidator";
+import {} from "../middleware/uploadImageMiddleware";
+
 const router = express.Router();
 //* Adding Nested Routes
 router.use("/:mainCategory/subcategories", subCategoryRoute);
@@ -20,12 +24,22 @@ router.use("/:mainCategory/subcategories", subCategoryRoute);
 router
   .route("/")
   .get(getCategories)
-  .post(createCategoryValidator, createCategory);
+  .post(
+    uploadCategoryImage,
+    resizeCategoryImage,
+    createCategoryValidator,
+    createCategory
+  );
 
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory)
-  .put(updateCategoryValidator, updateCategory)
+  .put(
+    uploadCategoryImage,
+    resizeCategoryImage,
+    updateCategoryValidator,
+    updateCategory
+  )
   .delete(deleteCategoryValidator, deleteCategory);
 
 export default router;

@@ -100,7 +100,19 @@ const productSchema = new mongoose.Schema<Product>(
 );
 
 // mongoose query middleware
-
+const setImageUrl = function (doc: Product) {
+  if (doc.cover) {
+    const imageURL = `${process.env.API_URL}/products/${doc.cover}`;
+    doc.cover = imageURL; // replace image name with full url
+  }
+  if (doc.images) {
+    const imagesURL = doc.images.map((image) => {
+      const imageURL = `${process.env.API_URL}/products/${image}`;
+      return imageURL;
+    });
+    doc.images = imagesURL; // replace image name with full url
+  }
+};
 //^find means all the query that start with find
 productSchema.pre(/^find/, function (next) {
   this.populate({
@@ -108,6 +120,13 @@ productSchema.pre(/^find/, function (next) {
     select: "name -_id",
   });
   next();
+});
+
+productSchema.post<Product>("init", (doc) => {
+  setImageUrl(doc);
+});
+productSchema.post<Product>("save", (doc) => {
+  setImageUrl(doc);
 });
 
 // 2- create Model
