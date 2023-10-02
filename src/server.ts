@@ -3,15 +3,20 @@ import path from "path";
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 
 //Routes
+
 import categoryRouter from "./routes/categoryRoute";
 import subCategoryRouter from "./routes/subcategoryRoute";
 import brandRoute from "./routes/brandRoute";
 import productRoute from "./routes/productRoute";
 import userRoute from "./routes/userRoute";
 import authRout from "./routes/authRoute";
+import reviewRoute from "./routes/reviewRoute";
+import wishlistRoute from "./routes/wishlistRoute";
+import addressRoute from "./routes/addressRoute";
+
 //DB configuration
 import { db_connection } from "./config/database";
 // custom error class to handle API errors
@@ -44,6 +49,9 @@ app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/auth", authRout);
+app.use("/api/v1/reviews", reviewRoute);
+app.use("/api/v1/wishlist", wishlistRoute);
+app.use("/api/v1/addresses", addressRoute);
 
 //*sending unknown routes error message to error handler
 app.all(

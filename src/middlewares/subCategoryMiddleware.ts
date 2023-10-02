@@ -10,6 +10,7 @@ export const setMainCategoryIdToBody = (
   }
   next();
 };
+//*nested route to get all subCategories for a specific mainCategory
 export const setFilter = (req: Request, res: Response, next: NextFunction) => {
   let filter = {};
   if (req.params.mainCategory)

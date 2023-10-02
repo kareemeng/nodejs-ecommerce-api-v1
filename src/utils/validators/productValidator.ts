@@ -121,12 +121,12 @@ export const createProductValidator = [
         );
       }
     }),
-  check("ratingAvg")
+  check("averageRating")
     .optional()
     .isNumeric()
-    .withMessage("Product ratingAvg must be a number")
+    .withMessage("Product averageRating must be a number")
     .isFloat({ min: 1, max: 5 })
-    .withMessage("Product ratingAvg must be 1 digit"),
+    .withMessage("Product averageRating must be 1 digit"),
   check("ratingQuantity")
     .optional()
     .isNumeric()

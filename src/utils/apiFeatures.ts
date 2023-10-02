@@ -59,7 +59,7 @@ class apiFeatures {
     return this;
   }
   /** sorting
-   * @example sort=price,-ratingAvg => sort by price ascending and ratingAvg descending
+   * @example sort=price,-averageRating => sort by price ascending and averageRating descending
    */
   sort() {
     const { sort } = this.queryString;
@@ -93,7 +93,7 @@ class apiFeatures {
     if (searchByKeyword) {
       const keyword = { $or: [{}] };
       //? $or is used to search in multiple fields , if we have only one field to search in we can remove $or
-      if (model === "Product") {
+      if (model === "Product" || model === "Review") {
         keyword.$or = [
           { title: { $regex: searchByKeyword.toString(), $options: "i" } },
           {

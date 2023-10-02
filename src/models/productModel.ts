@@ -12,7 +12,7 @@ export interface Product {
   cover: string;
   colors?: string[];
   images?: string[];
-  ratingAvg?: number;
+  averageRating?: number;
   ratingQuantity?: number;
   category: mongoose.Schema.Types.ObjectId;
   brand?: mongoose.Schema.Types.ObjectId;
@@ -66,7 +66,7 @@ const productSchema = new mongoose.Schema<Product>(
     cover: {
       type: String,
     },
-    ratingAvg: {
+    averageRating: {
       type: Number,
       min: [1, "Rating must be at least 1"],
       max: [5, "Rating must can not be more than 5"],
@@ -96,7 +96,12 @@ const productSchema = new mongoose.Schema<Product>(
       ref: "Subcategory",
     },*/
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    //! IMPORTANT toJSON and toObject are used to show virtuals in the response the virtuals are not stored in the database
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 // mongoose query middleware
@@ -113,7 +118,21 @@ const setImageUrl = function (doc: Product) {
     doc.images = imagesURL; // replace image name with full url
   }
 };
+/*
+ * virtual populate reviews for product model (one to many) (product -> reviews) (one product has many reviews)
+ * to do virtual populate we need to add a virtual field to the schema
+ * virtual field is a field that is not stored in the database but we can use it to populate other fields
+ * the needed fields are: ref, foreignField, localField
+ * (the model name) (the field in the other model) (the field in the current model)
+ */
+productSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "product",
+  localField: "_id",
+});
+
 //^find means all the query that start with find
+//as find, findOne, findById, findByIdAndUpdate, findByIdAndDelete
 productSchema.pre(/^find/, function (next) {
   this.populate({
     path: "category",

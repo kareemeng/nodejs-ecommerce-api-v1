@@ -1,15 +1,17 @@
 import fs from "fs";
 import express from "express";
+import bcrypt from "bcrypt"; // for hashing passwords
 import slugify from "slugify";
 import sharp from "sharp"; // for resizing images
 import { v4 as uuidv4 } from "uuid"; // for generating unique names
 import asyncHandler from "express-async-handler"; // for handling async errors
-import apiError from "../utils/apiError"; // for handling errors
-import apiFeatures from "../utils/apiFeatures"; // for filtering, sorting, pagination
-import bcrypt from "bcrypt"; // for hashing passwords
-import { generateToken, verifyToken } from "../utils/generate-verifyToken"; // for generating and verifying tokens
-import e from "express";
 
+import apiFeatures from "../utils/apiFeatures"; // for filtering, sorting, pagination
+import apiError from "../utils/apiError"; // for handling errors
+import { generateToken, verifyToken } from "../utils/generate-verifyToken"; // for generating and verifying tokens
+//TODO: refactor the code to be more readable and move non-generic functions to their own files
+
+// general resize image middleware
 export const resizeImage = (
   width: number = 500,
   hight: number = 500,
@@ -189,7 +191,7 @@ export const getAll = (Model: any, modelName: string = "") =>
  * @param populateOption mongoose populate option ex: {path: "category", select: "name "}
  * @returns
  */
-export const getOne = (Model: any) =>
+export const getOne = (Model: any, populateOption?: any) =>
   asyncHandler(
     async (
       req: express.Request,
@@ -198,7 +200,15 @@ export const getOne = (Model: any) =>
     ): Promise<void> => {
       //! populate make another query to get the data of the mainCategory from the CategoryModel use populate only if you need the data of the mainCategory
       const { id } = req.params;
-      const Document = await Model.findById(id);
+      // build query
+      let query = Model.findById(id);
+      if (populateOption) {
+        //? populateOption is an object ex: {path: "category", select: "name "}
+        query = query.populate(populateOption);
+      }
+      // execute query
+      const Document = await query;
+      // send response
       if (!Document) {
         return next(new apiError(`no Document found for id:${id}`, 404));
       } else {
@@ -249,6 +259,7 @@ export const updateOne = (Model: any) =>
       if (!newDocument) {
         return next(new apiError(`no Document found for id:${id}`, 404));
       } else {
+        newDocument.save(); //? to trigger the pre save middleware
         res.status(200).json({ data: newDocument });
       }
     }
@@ -269,6 +280,7 @@ export const deleteOne = (Model: any) =>
       if (!Document) {
         return next(new apiError(`no Document found for id:${id}`, 404));
       }
+      // Document.deleteOne(); //? to trigger the pre remove middleware
       res
         .status(204)
         .json({ result: `${Document.slug}: successfully deleted` });

@@ -40,8 +40,10 @@ const destroyData = async () => {
 // node seeder.js -d
 if (process.argv[2] === "-i") {
   // node seeder.js -i
+  console.log("inserting data");
   insertData();
 } else if (process.argv[2] === "-d") {
   // node seeder.js -d
+  console.log("destroying data");
   destroyData();
 }

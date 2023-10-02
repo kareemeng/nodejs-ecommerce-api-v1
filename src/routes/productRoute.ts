@@ -1,4 +1,5 @@
 import express from "express";
+import reviewRoute from "./reviewRoute";
 import {
   getProducts,
   getProduct,
@@ -18,6 +19,12 @@ import { protect, restrictTo } from "../services/authServices";
 
 // import { removeDuplicateSubCategories } from  "../middleware/subCategoryMiddleware";
 const router = express.Router();
+
+// add nested route for reviews
+// POST /api/v1/products/:productId/reviews (create review)
+// GET /api/v1/products/:productId/reviews (get all reviews)
+// GET /api/v1/products/:productId/reviews/:id (get single review)
+router.use("/:productId/reviews", reviewRoute);
 
 router
   .route("/")

@@ -1,6 +1,7 @@
 import { SubCategoryModel } from "../models/SubCategoryModel";
 import handler from "./handlers";
-/**  Get List of All SubCategories or SubCategories of a specific MainCategory
+
+/**  Get List of All SubCategories or SubCategories of a specific MainCategory (nested route)
  * @route GET /api/v1/subcategories
  * @nestedRoute GET /api/v1/categories/:mainCategory/subcategories
  * @access public

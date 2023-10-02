@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+export interface Address {
+  id?: mongoose.Schema.Types.ObjectId;
+  alias: String;
+  details: String;
+  phone?: String;
+  city: String;
+  postalCode: String;
+}
 export interface User {
   _id?: string; // this is the id of the user in the database (mongodb) not the id of the user in the request
   name: string;
@@ -14,6 +22,8 @@ export interface User {
   profilePicture?: string;
   role?: string;
   active?: boolean;
+  wishlist?: mongoose.Schema.Types.ObjectId[];
+  addresses?: Address[];
 }
 
 const userSchema = new mongoose.Schema<User>(
@@ -65,6 +75,23 @@ const userSchema = new mongoose.Schema<User>(
       type: Boolean,
       default: true,
     },
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+
+    addresses: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId },
+        alias: String,
+        details: String,
+        phone: String,
+        city: String,
+        postalCode: String,
+      },
+    ],
   },
   { timestamps: true }
 );

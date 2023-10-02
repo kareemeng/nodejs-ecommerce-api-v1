@@ -18,7 +18,7 @@ export const getProducts = handler.getAll(ProductModel, "Product");
  * @route GET /api/v1/products/:id
  * @access public
  */
-export const getProduct = handler.getOne(ProductModel);
+export const getProduct = handler.getOne(ProductModel, { path: "reviews" });
 /** Create New Product
  * @route POST /api/v1/products
  * @access private
