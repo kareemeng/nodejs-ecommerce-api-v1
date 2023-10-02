@@ -2,6 +2,7 @@ import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 // check is used instead of param and body because it can be used in both cases
 import { check } from "express-validator";
 export const getCategoryValidator = [
+  check("id").notEmpty().withMessage("Category id is required"),
   check("id").isMongoId().withMessage("invalid category id format"),
   validatorMiddleware,
 ];
@@ -15,6 +16,7 @@ export const createCategoryValidator = [
 ];
 
 export const updateCategoryValidator = [
+  check("id").notEmpty().withMessage("Category id is required"),
   check("id").isMongoId().withMessage("invalid category id format"),
   check("name").notEmpty().withMessage("Category name is required"),
   check("name")
@@ -24,6 +26,14 @@ export const updateCategoryValidator = [
 ];
 
 export const deleteCategoryValidator = [
+  check("id").notEmpty().withMessage("Category id is required"),
   check("id").isMongoId().withMessage("invalid category id format"),
   validatorMiddleware,
 ];
+
+export default {
+  getCategoryValidator,
+  createCategoryValidator,
+  updateCategoryValidator,
+  deleteCategoryValidator,
+};

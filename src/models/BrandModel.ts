@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 
 // interface for the model
-export interface Category {
+export interface Brand {
   name: string;
   slug?: string;
   image?: string;
 }
 
-//1- create schema with the category interface
-const categorySchema = new mongoose.Schema<Category>(
+//1- create schema with the Brand interface
+const brandSchema = new mongoose.Schema<Brand>(
   {
     name: {
       type: String,
-      required: [true, "Category required"],
+      required: [true, "Brand required"],
       unique: true,
-      minlength: [3, "Too short category name"],
-      maxlength: [32, "Too long category name"],
+      minlength: [2, "Too short Brand name"],
+      maxlength: [32, "Too long Brand name"],
     },
     slug: {
       type: String,
@@ -28,4 +28,4 @@ const categorySchema = new mongoose.Schema<Category>(
 
 // 2- create Model
 // while naming model its convention to start with capital letters
-export const CategoryModel = mongoose.model("Category", categorySchema);
+export const BrandModel = mongoose.model("Brand", brandSchema);

@@ -3,8 +3,7 @@ import slugify from "slugify";
 import { CategoryModel, Category } from "../models/CategoryModel";
 import asyncHandler from "express-async-handler";
 import apiError from "../utils/apiError";
-/**
- *  Get List of All categories
+/**  Get List of All categories
  * @route GET /api/v1/categories
  * @access public
  */
@@ -30,8 +29,7 @@ export const getCategories = asyncHandler(
     }
   }
 );
-/**
- * Get specific category
+/** Get specific category
  * @route GET /api/v1/categories/:id
  * @access public
  */
@@ -41,7 +39,7 @@ export const getCategory = asyncHandler(
     res: express.Response,
     next: express.NextFunction
   ): Promise<void> => {
-    const id = req.params.id;
+    const { id } = req.params;
     const category = await CategoryModel.findById(id);
     if (!category) {
       return next(new apiError(`no category found for id:${id}`, 404));
@@ -50,8 +48,7 @@ export const getCategory = asyncHandler(
     }
   }
 );
-/**
- * Create New Category
+/** Create New Category
  * @route POST /api/v1/categories
  * @access private
  */
@@ -61,7 +58,7 @@ export const createCategory = asyncHandler(
     res: express.Response,
     next: express.NextFunction
   ): Promise<void> => {
-    const name: string = req.body.name;
+    const { name } = req.body;
     const category: Category = {
       name,
       slug: slugify(name),
@@ -70,8 +67,7 @@ export const createCategory = asyncHandler(
     res.status(201).json({ data: cat });
   }
 );
-/**
- * Update Specific Category
+/** Update Specific Category
  * @route PUT /api/v1/categories/:id
  * @access private
  */
@@ -81,8 +77,8 @@ export const updateCategory = asyncHandler(
     res: express.Response,
     next: express.NextFunction
   ): Promise<void> => {
-    const id = req.params.id;
-    const name: string = req.body.name;
+    const { id } = req.params;
+    const { name } = req.body;
     const category: Category = {
       name,
       slug: slugify(name),
@@ -101,8 +97,7 @@ export const updateCategory = asyncHandler(
     }
   }
 );
-/**
- * Delete Specific Category
+/** Delete Specific Category
  * @route DELETE /api/v1/categories/:id
  * @access privet
  */
@@ -112,7 +107,7 @@ export const deleteCategory = asyncHandler(
     res: express.Response,
     next: express.NextFunction
   ): Promise<void> => {
-    const id = req.params.id;
+    const { id } = req.params;
     const category = await CategoryModel.findByIdAndDelete(id);
     if (!category) {
       return next(new apiError(`no category found for id:${id}`, 404));
