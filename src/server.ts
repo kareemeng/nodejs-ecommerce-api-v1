@@ -1,9 +1,11 @@
 import express from "express";
 import morgan from "morgan";
 import dotenv from "dotenv";
+//Routes
 import categoryRouter from "./routes/categoryRoute";
 import subCategoryRouter from "./routes/subcategoryRoute";
 import brandRoute from "./routes/brandRoute";
+import productRoute from "./routes/productRoute";
 //DB configuration
 import { db_connection } from "./config/database";
 // custom error class to handle API errors
@@ -30,6 +32,7 @@ db_connection(); //connect to database
 app.use("/api/v1/categories", categoryRouter);
 app.use("/api/v1/subcategories", subCategoryRouter);
 app.use("/api/v1/brands", brandRoute);
+app.use("/api/v1/products", productRoute);
 
 //*sending unknown routes error message to error handler
 app.all(

@@ -15,6 +15,7 @@ import {
 import {
   setMainCategoryIdToBody,
   setFilter,
+  removeDuplicateSubCategories,
 } from "../middleware/subCategoryMiddleware";
 
 //mergeParams: true is required for nested routes to access the parent params

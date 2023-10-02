@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx nodemon src/server.ts",
     "build": "npx tsc",
-    "start:prod": "SET NODE_ENV=production&& npx nodemon src/server.ts"
+    "start:prod": "SET NODE_ENV=production&& npx nodemon src/server.ts",
+    "seeder": "npx ts-node src/utils/data/seeder.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.15.0",
+    "colors": "^1.4.0",
     "eslint": "^8.40.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.8.0",

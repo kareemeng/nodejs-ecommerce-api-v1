@@ -17,3 +17,16 @@ export const setFilter = (req: Request, res: Response, next: NextFunction) => {
   req.body.filter = filter;
   next();
 };
+
+export const removeDuplicateSubCategories = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.body.subcategories) {
+    const set = new Set(req.body.subcategories);
+    req.body.subcategories = Array.from(set);
+    // console.log(req.body.subcategories);
+  }
+  next();
+};
