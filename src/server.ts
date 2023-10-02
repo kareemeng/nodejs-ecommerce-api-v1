@@ -6,16 +6,8 @@ import dotenv from "dotenv";
 // import bodyParser from "body-parser";
 
 //Routes
-
-import categoryRouter from "./routes/categoryRoute";
-import subCategoryRouter from "./routes/subcategoryRoute";
-import brandRoute from "./routes/brandRoute";
-import productRoute from "./routes/productRoute";
-import userRoute from "./routes/userRoute";
-import authRout from "./routes/authRoute";
-import reviewRoute from "./routes/reviewRoute";
-import wishlistRoute from "./routes/wishlistRoute";
-import addressRoute from "./routes/addressRoute";
+import mountRouts from "./routes";
+// we can use ./routes instead of ./routes/index because index is the default file
 
 //DB configuration
 import { db_connection } from "./config/database";
@@ -42,17 +34,7 @@ if (process.env.NODE_ENV === "development") {
 
 db_connection(); //connect to database
 
-//Mount Routs
-app.use("/api/v1/categories", categoryRouter);
-app.use("/api/v1/subcategories", subCategoryRouter);
-app.use("/api/v1/brands", brandRoute);
-app.use("/api/v1/products", productRoute);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/auth", authRout);
-app.use("/api/v1/reviews", reviewRoute);
-app.use("/api/v1/wishlist", wishlistRoute);
-app.use("/api/v1/addresses", addressRoute);
-
+mountRouts(app); //mount all routes
 //*sending unknown routes error message to error handler
 app.all(
   "*",
