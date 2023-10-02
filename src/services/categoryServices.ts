@@ -1,6 +1,6 @@
 import handler from "./handlers";
 import { CategoryModel } from "../models/CategoryModel";
-import { uploadSingleImage } from "../middleware/uploadImageMiddleware";
+import { uploadSingleImage } from "../middlewares/uploadImageMiddleware";
 
 export const uploadCategoryImage = uploadSingleImage("image");
 

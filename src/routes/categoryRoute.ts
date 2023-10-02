@@ -15,8 +15,7 @@ import {
   updateCategoryValidator,
   deleteCategoryValidator,
 } from "../utils/validators/categoryValidator";
-import {} from "../middleware/uploadImageMiddleware";
-
+import { protect, restrictTo } from "../services/authServices";
 const router = express.Router();
 //* Adding Nested Routes
 router.use("/:mainCategory/subcategories", subCategoryRoute);
@@ -25,6 +24,8 @@ router
   .route("/")
   .get(getCategories)
   .post(
+    protect,
+    restrictTo("admin", "manager"),
     uploadCategoryImage,
     resizeCategoryImage,
     createCategoryValidator,
@@ -35,12 +36,19 @@ router
   .route("/:id")
   .get(getCategoryValidator, getCategory)
   .put(
+    protect,
+    restrictTo("admin", "manager"),
     uploadCategoryImage,
     resizeCategoryImage,
     updateCategoryValidator,
     updateCategory
   )
-  .delete(deleteCategoryValidator, deleteCategory);
+  .delete(
+    protect,
+    restrictTo("admin"),
+    deleteCategoryValidator,
+    deleteCategory
+  );
 
 export default router;
 

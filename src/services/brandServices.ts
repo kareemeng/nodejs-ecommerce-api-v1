@@ -1,6 +1,6 @@
 import { BrandModel } from "../models/BrandModel";
 import handler from "./handlers";
-import { uploadSingleImage } from "../middleware/uploadImageMiddleware";
+import { uploadSingleImage } from "../middlewares/uploadImageMiddleware";
 
 export const uploadBrandImage = uploadSingleImage("image");
 
@@ -12,7 +12,7 @@ export const resizeBrandImage = handler.resizeImage(500, 500, "jpeg", "brands");
 export const getBrands = handler.getAll(BrandModel, "brands");
 /** Get specific Brand
  * @route GET /api/v1/brands/:id
- * @access public
+ * @access
  */
 export const getBrand = handler.getOne(BrandModel);
 /** Create New Brand

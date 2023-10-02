@@ -1,11 +1,14 @@
 import fs from "fs";
 import express from "express";
 import slugify from "slugify";
-import sharp from "sharp";
-import { v4 as uuidv4 } from "uuid";
-import asyncHandler from "express-async-handler";
-import apiError from "../utils/apiError";
-import apiFeatures from "../utils/apiFeatures";
+import sharp from "sharp"; // for resizing images
+import { v4 as uuidv4 } from "uuid"; // for generating unique names
+import asyncHandler from "express-async-handler"; // for handling async errors
+import apiError from "../utils/apiError"; // for handling errors
+import apiFeatures from "../utils/apiFeatures"; // for filtering, sorting, pagination
+import bcrypt from "bcrypt"; // for hashing passwords
+import { generateToken, verifyToken } from "../utils/generate-verifyToken"; // for generating and verifying tokens
+import e from "express";
 
 export const resizeImage = (
   width: number = 500,
@@ -33,7 +36,9 @@ export const resizeImage = (
           .jpeg({ quality: 90 })
           .toFile(`uploads/${servicesName}/${fileName}`);
         //pass the filename in the req.body to be stored in the database
-        req.body.image = fileName;
+        servicesName === "users"
+          ? (req.body.profilePicture = fileName)
+          : (req.body.image = fileName);
         next();
       } else if (req.files) {
         // if the request contain multiple files or mixed files
@@ -90,6 +95,7 @@ export const resizeImage = (
       //TODo: delete the old image from the uploads folder
     }
   );
+// product images resize middleware
 export const resizeProductImages = () =>
   asyncHandler(
     async (
@@ -241,7 +247,7 @@ export const updateOne = (Model: any) =>
         new: true,
       });
       if (!newDocument) {
-        return next(new apiError(`no Product found for id:${id}`, 404));
+        return next(new apiError(`no Document found for id:${id}`, 404));
       } else {
         res.status(200).json({ data: newDocument });
       }
@@ -268,11 +274,130 @@ export const deleteOne = (Model: any) =>
         .json({ result: `${Document.slug}: successfully deleted` });
     }
   );
+// user controllers - admin
+export const updateUser = (Model: any) =>
+  asyncHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ): Promise<void> => {
+      if (req.body.name) req.body.slug = slugify(req.body.name);
+      const { id } = req.params;
+      const { name, slug, phone, email, profilePicture, role } = req.body;
+      const newDocument = await Model.findOneAndUpdate(
+        { _id: id },
+        { name, slug, phone, email, profilePicture, role },
+        {
+          new: true,
+        }
+      );
+      if (!newDocument) {
+        return next(new apiError(`no Product found for id:${id}`, 404));
+      } else {
+        res.status(200).json({ data: newDocument });
+      }
+    }
+  );
+export const updateUserPassword = (Model: any) =>
+  asyncHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ): Promise<void> => {
+      const { id } = req.params;
+      const salt = +(process.env.SALT || 12);
+      const password = bcrypt.hashSync(
+        `${req.body.newPassword}${process.env.PEPPER}`,
+        salt
+      );
+      const newDocument = await Model.findOneAndUpdate(
+        { _id: id },
+        { password, passwordChangedAt: Date.now() },
+        {
+          new: true,
+        }
+      );
+      if (!newDocument) {
+        return next(new apiError(`no user found for id:${id}`, 404));
+      } else {
+        res.status(200).json({ data: newDocument });
+      }
+    }
+  );
+// user controllers - user
+export const updateLoggedUserData = (Model: any) =>
+  asyncHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ): Promise<void> => {
+      const id = req.user._id;
+      if (req.body.name) req.body.slug = slugify(req.body.name);
+      const { name, slug, phone, email, profilePicture } = req.body;
+      const user = await Model.findByIdAndUpdate(
+        id,
+        { name, slug, phone, email, profilePicture },
+        { new: true }
+      );
+      const token = generateToken({ userId: id });
+      res.status(200).json({ data: user, token });
+    }
+  );
+export const updateLoggedUserPassword = (Model: any) =>
+  asyncHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ): Promise<void> => {
+      const { _id } = req.user;
+      const salt = +(process.env.SALT || 12);
+      const password = bcrypt.hashSync(
+        `${req.body.newPassword}${process.env.PEPPER}`,
+        salt
+      );
+      const user = await Model.findOneAndUpdate(
+        { _id },
+        { password, passwordChangedAt: Date.now() },
+        {
+          new: true,
+        }
+      );
+      const token = generateToken({ userId: _id });
+      res.status(200).json({ data: user, token });
+    }
+  );
+
+export const deactivateUser = (Model: any) =>
+  asyncHandler(
+    async (
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ): Promise<void> => {
+      const { id } = req.params;
+      const user = await Model.findByIdAndUpdate(
+        id,
+        { active: false },
+        { new: true }
+      );
+      res.status(200).json({ active: user.active });
+    }
+  );
+
 export default {
   getAll,
   getOne,
   createOne,
   updateOne,
+  updateUser,
+  updateUserPassword,
+  updateLoggedUserPassword,
+  updateLoggedUserData,
+  deactivateUser,
   deleteOne,
   resizeImage,
   resizeProductImages,

@@ -1,6 +1,6 @@
 import handler from "./handlers";
 import { ProductModel } from "../models/productModel";
-import { uploadMixedImage } from "../middleware/uploadImageMiddleware";
+import { uploadMixedImage } from "../middlewares/uploadImageMiddleware";
 
 export const uploadProductImage = uploadMixedImage([
   { name: "cover", maxCount: 1 },

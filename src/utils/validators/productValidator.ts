@@ -1,4 +1,4 @@
-import { validatorMiddleware } from "../../middleware/validatorMiddleware";
+import { validatorMiddleware } from "../../middlewares/validatorMiddleware";
 import { CategoryModel } from "../../models/CategoryModel";
 import { SubCategoryModel } from "../../models/SubCategoryModel";
 import { BrandModel } from "../../models/BrandModel";

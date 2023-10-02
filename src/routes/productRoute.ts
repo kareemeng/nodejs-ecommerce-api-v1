@@ -14,6 +14,7 @@ import {
   updateProductValidator,
   deleteProductValidator,
 } from "../utils/validators/productValidator";
+import { protect, restrictTo } from "../services/authServices";
 
 // import { removeDuplicateSubCategories } from  "../middleware/subCategoryMiddleware";
 const router = express.Router();
@@ -22,6 +23,8 @@ router
   .route("/")
   .get(getProducts)
   .post(
+    protect,
+    restrictTo("admin", "manager"),
     uploadProductImage,
     resizeProductImage,
     createProductValidator,
@@ -31,7 +34,12 @@ router
 router
   .route("/:id")
   .get(getProductValidator, getProduct)
-  .put(updateProductValidator, updateProduct)
-  .delete(deleteProductValidator, deleteProduct);
+  .put(
+    protect,
+    restrictTo("admin", "manager"),
+    updateProductValidator,
+    updateProduct
+  )
+  .delete(protect, restrictTo("admin"), deleteProductValidator, deleteProduct);
 
 export default router;

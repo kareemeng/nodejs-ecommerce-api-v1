@@ -1,4 +1,4 @@
-import { validatorMiddleware } from "../../middleware/validatorMiddleware";
+import { validatorMiddleware } from "../../middlewares/validatorMiddleware";
 import { CategoryModel } from "../../models/CategoryModel";
 // check is used instead of param and body because it can be used in both cases
 import { check } from "express-validator";

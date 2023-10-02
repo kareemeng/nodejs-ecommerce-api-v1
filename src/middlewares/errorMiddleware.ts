@@ -1,6 +1,13 @@
 import express from "express";
 import apiError from "../utils/apiError";
 
+const handleJsonWebTokenError = () => {
+  return new apiError("Invalid token. Please log in again", 401);
+};
+const handleTokenExpiredError = () => {
+  return new apiError("Your token has expired. Please log in again", 401);
+};
+
 /**
  * global error handler (to handle errors caught by express)
  * @param err
@@ -20,6 +27,8 @@ export const globalErrorHandler = (
   if (process.env.NODE_ENV === "development") {
     developmentError(err, req, res);
   } else if (process.env.NODE_ENV === "production") {
+    if (err.name === "JsonWebTokenError") err = handleJsonWebTokenError();
+    if (err.name === "TokenExpiredError") err = handleTokenExpiredError();
     productionError(err, req, res);
   }
 };
