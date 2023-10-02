@@ -1,14 +1,13 @@
 import mongoose from "mongoose";
 
-//model and schema
-// 0-interface
+// interface for the model
 export interface Category {
   name?: string;
-  slug: string;
+  slug?: string;
   image?: string;
 }
 
-//1- create schema
+//1- create schema with the category interface
 const categorySchema = new mongoose.Schema<Category>(
   {
     name: {
