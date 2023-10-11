@@ -10,6 +10,7 @@ import wishlistRoute from "./wishlistRoute";
 import addressRoute from "./addressRoute";
 import couponRoute from "./couponRoute";
 import cartRoute from "./cartRoute";
+import orderRoute from "./orderRoute";
 
 const mountRouts = (app: express.Application) => {
   app.use("/api/v1/categories", categoryRouter);
@@ -23,6 +24,7 @@ const mountRouts = (app: express.Application) => {
   app.use("/api/v1/addresses", addressRoute);
   app.use("/api/v1/coupons", couponRoute);
   app.use("/api/v1/cart", cartRoute);
+  app.use("/api/v1/order", orderRoute);
 };
 
 export default mountRouts;

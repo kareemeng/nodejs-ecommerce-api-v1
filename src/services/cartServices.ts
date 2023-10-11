@@ -5,6 +5,7 @@ import { CartModel, Cart, CartItem } from "../models/CartModel";
 import { CouponModel, Coupon } from "../models/CouponModel";
 import { ProductModel } from "../models/productModel";
 //TODO: add validators and use aggregate to get total cost and total cost after discount
+//TODO: validate quantity increase and decrease
 /**
  * @desc    Add Product To Cart
  * @route   POST /api/cart
