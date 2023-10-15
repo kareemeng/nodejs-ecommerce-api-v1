@@ -1,8 +1,18 @@
 import express from "express";
-import { createCashOrder } from "../services/orderServices";
+import {
+  createCashOrder,
+  getLoggedUserOrders,
+  getOrders,
+  getOrder,
+} from "../services/orderServices";
 //TODO: add validators
 import { protect, restrictTo } from "../services/authServices";
 const router = express.Router();
-router.use(protect, restrictTo("user"));
-router.route("/:cartId").post(createCashOrder);
+
+router.use(protect);
+router.route("/:cartId").post(restrictTo("user"), createCashOrder);
+
+router.use(restrictTo("admin", "manager", "user"));
+router.route("/").get(getLoggedUserOrders, getOrders);
+router.route("/:id").get(getOrder);
 export default router;

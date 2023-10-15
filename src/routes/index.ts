@@ -24,7 +24,7 @@ const mountRouts = (app: express.Application) => {
   app.use("/api/v1/addresses", addressRoute);
   app.use("/api/v1/coupons", couponRoute);
   app.use("/api/v1/cart", cartRoute);
-  app.use("/api/v1/order", orderRoute);
+  app.use("/api/v1/orders", orderRoute);
 };
 
 export default mountRouts;

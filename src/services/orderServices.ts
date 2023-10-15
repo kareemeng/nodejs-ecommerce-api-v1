@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
 import apiError from "../utils/apiError";
+import handler from "./handlers";
 import { CartModel, Cart, CartItem } from "../models/CartModel";
 import { OrderModel, Order } from "../models/OrderModel";
 import { ProductModel } from "../models/productModel";
@@ -54,3 +55,32 @@ export const createCashOrder = asyncHandler(
     });
   }
 );
+
+/**
+ * @desc    Get logged user orders
+ * @route   GET /api/orders/myOrders
+ * @access  protected/User
+ */
+export const getLoggedUserOrders = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let filter = {};
+    if (req.user.role !== "admin") {
+      filter = { user: req.user._id };
+    }
+    req.body.filter = filter;
+    next();
+  }
+);
+
+/**
+ * @desc    Get all orders
+ * @route   GET /api/orders/
+ * @access  private/Admin
+ */
+export const getOrders = handler.getAll(OrderModel, "Order");
+/**
+ * @desc    Get specific order
+ * @route   GET /api/orders/:id
+ * @access  private/Admin
+ */
+export const getOrder = handler.getOne(OrderModel);
