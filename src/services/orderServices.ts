@@ -84,3 +84,50 @@ export const getOrders = handler.getAll(OrderModel, "Order");
  * @access  private/Admin
  */
 export const getOrder = handler.getOne(OrderModel);
+
+/**
+ * @desc    Update order to delivered
+ * @route   PUT /api/orders/:id/delivered
+ * @access  private/Admin
+ */
+
+export const updateOrderToDelivered = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const order = await OrderModel.findById(req.params.id);
+    if (!order) {
+      return next(
+        new apiError(`there is no order with this ID:${req.params.id} `, 404)
+      );
+    }
+    order.isDelivered = true;
+    order.deliveredAt = new Date();
+    const updatedOrder = await order.save();
+    res.status(200).json({
+      status: "success",
+      data: updatedOrder,
+    });
+  }
+);
+/**
+ * @desc    Update order to paid
+ * @route   PUT /api/orders/:id/paid
+ * @access  private/Admin
+ */
+
+export const updateOrderToPaid = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const order = await OrderModel.findById(req.params.id);
+    if (!order) {
+      return next(
+        new apiError(`there is no order with this ID:${req.params.id} `, 404)
+      );
+    }
+    order.isPaid = true;
+    order.paidAt = new Date();
+    const updatedOrder = await order.save();
+    res.status(200).json({
+      status: "success",
+      data: updatedOrder,
+    });
+  }
+);
