@@ -6,14 +6,17 @@ import {
   getOrder,
   updateOrderToPaid,
   updateOrderToDelivered,
+  getCheckoutSession,
 } from "../services/orderServices";
 //TODO: add validators
 import { protect, restrictTo } from "../services/authServices";
+import { Session } from "inspector";
 const router = express.Router();
 
 router.use(protect);
 
 router.route("/:cartId").post(restrictTo("user"), createCashOrder);
+router.get("/checkout-session/:cartId", restrictTo("user"), getCheckoutSession);
 
 router
   .route("/")

@@ -1,11 +1,15 @@
 import asyncHandler from "express-async-handler";
+import stripe from "stripe";
 import { Request, Response, NextFunction } from "express";
 import apiError from "../utils/apiError";
 import handler from "./handlers";
 import { CartModel, Cart, CartItem } from "../models/CartModel";
 import { OrderModel, Order } from "../models/OrderModel";
 import { ProductModel } from "../models/productModel";
-
+import { json } from "body-parser";
+const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2023-10-16",
+});
 /**
  * @desc    Create Cash Order
  * @route   POST /api/orders/:cartId
@@ -83,6 +87,7 @@ export const getOrders = handler.getAll(OrderModel, "Order");
  * @route   GET /api/orders/:id
  * @access  private/Admin
  */
+
 export const getOrder = handler.getOne(OrderModel);
 
 /**
@@ -90,7 +95,6 @@ export const getOrder = handler.getOne(OrderModel);
  * @route   PUT /api/orders/:id/delivered
  * @access  private/Admin
  */
-
 export const updateOrderToDelivered = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const order = await OrderModel.findById(req.params.id);
@@ -113,7 +117,6 @@ export const updateOrderToDelivered = asyncHandler(
  * @route   PUT /api/orders/:id/paid
  * @access  private/Admin
  */
-
 export const updateOrderToPaid = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const order = await OrderModel.findById(req.params.id);
@@ -128,6 +131,67 @@ export const updateOrderToPaid = asyncHandler(
     res.status(200).json({
       status: "success",
       data: updatedOrder,
+    });
+  }
+);
+
+/**
+ * @desc    get check out session from stripe and send it as response
+ * @route   POST /api/orders/checkout-session/:cartId
+ * @access  protected/User
+ */
+export const getCheckoutSession = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { cartId } = req.params;
+    //get cart
+    const cart = await CartModel.findById(cartId);
+    if (!cart) {
+      return next(new apiError("Cart not found", 404));
+    }
+    //get total cost
+    const totalCost =
+      cart.totalCostAfterDiscount +
+      parseFloat(process.env.SHIPPING || "0") +
+      parseFloat(process.env.TAX || "0");
+    if (isNaN(totalCost)) {
+      return next(new Error("Invalid total cost"));
+    }
+    //create stripe session
+    const session = await stripeInstance.checkout.sessions.create(
+      {
+        payment_method_types: ["card"],
+
+        line_items: [
+          {
+            price_data: {
+              currency: "egp",
+              product_data: {
+                name: req.user.name,
+              },
+              unit_amount: totalCost * 100,
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "payment",
+
+        success_url: `${req.protocol}://${req.get("host")}/orders`,
+        cancel_url: `${req.protocol}://${req.get("host")}/cart`,
+
+        customer_email: req.user.email,
+        client_reference_id: cartId,
+
+        metadata: req.body.shippingAddress,
+      },
+      {
+        apiKey: process.env.STRIPE_SECRET_KEY!,
+      }
+    );
+
+    //send session as response
+    res.status(200).json({
+      status: "success",
+      data: session,
     });
   }
 );
