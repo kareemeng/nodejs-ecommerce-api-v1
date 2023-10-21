@@ -33,8 +33,8 @@ const ReviewSchema = new mongoose.Schema<Review>(
   },
   { timestamps: true }
 );
-
-ReviewSchema.pre(/^find/, function (next) {
+//! add this: mongoose.Query<any[], any> to fix the type error in pre middleware
+ReviewSchema.pre(/^find/, function (this: mongoose.Query<any[], any>, next) {
   this.populate({ path: "user", select: "name profilePicture" });
   next();
 });

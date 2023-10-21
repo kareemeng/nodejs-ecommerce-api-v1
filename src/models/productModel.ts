@@ -133,7 +133,8 @@ productSchema.virtual("reviews", {
 
 //^find means all the query that start with find
 //as find, findOne, findById, findByIdAndUpdate, findByIdAndDelete
-productSchema.pre(/^find/, function (next) {
+//! add this: mongoose.Query<any[], any> to fix the type error in pre middleware
+productSchema.pre(/^find/, function (this: mongoose.Query<any[], any>, next) {
   this.populate({
     path: "category",
     select: "name -_id",

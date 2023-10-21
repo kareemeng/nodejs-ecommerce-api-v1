@@ -90,8 +90,8 @@ const orderSchema = new mongoose.Schema<Order>(
   },
   { timestamps: true }
 );
-
-orderSchema.pre(/^find/, function (next) {
+//! add this: mongoose.Query<any[], any> to fix the type error in pre middleware
+orderSchema.pre(/^find/, function (this: mongoose.Query<any[], any>, next) {
   this.populate({
     path: "user",
     select: "name profilePicture email phone",
