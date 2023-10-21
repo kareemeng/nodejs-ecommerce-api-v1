@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon src/server.ts",
-    "deploy": "npm i && npm run build && npm run seeder",
+    "deploy": "npm i && npm run build",
     "build": "npx tsc",
     "start:prod": "SET NODE_ENV=production&& npx nodemon src/server.ts",
     "seeder": "npx ts-node src/utils/data/seeder.ts"
